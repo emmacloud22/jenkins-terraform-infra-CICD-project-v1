@@ -1,4 +1,4 @@
-# End-to-End Jenkins CI/CD Pipeline Project (Arch)
+# End-to-End Jenkins CI/CD Pipeline Project Architecture (Java Web Application)
 ![CompleteCICDProject!](https://lucid.app/publicSegments/view/0c183bd6-73f4-4547-93e1-5246db5e863c/image.png) 
 
 ###### Project ToolBox 🧰
@@ -16,196 +16,135 @@
 - [Grafana](https://grafana.com/) Grafana is a multi-platform open source analytics and interactive visualization web application. It provides charts, graphs, and alerts for the web when connected to supported data sources.
 - [Splunk](https://www.splunk.com/) Splunk is an innovative technology which searches and indexes application/system log files and helps organizations derive insights from the data.
 
-# Jenkins Complete CI/CD Pipeline Project Runbook
-1) Create a GitHub Repository with the name `Jenkins-Realworld-CICD-Project` and push the code in this branch(main) to 
+# Jenkins Complete CI/CD Pipeline Environment Setup Runbook
+1) Create a GitHub Repository with the name `Jenkins-CICD-Project` and push the code in this branch(main) to 
     your remote repository (your newly created repository). 
-    - Go to GitHub: https://github.com
-    - Login to `Your GitHub Account`
-    - Create a Repository called `Jenkins-Realworld-CICD-Project`
-    - Clone the Repository in the `Repository` directory/folder on your `local machine`
-    - Download the code in in this repository `"Main branch"`: https://github.com/awanmbandi/realworld-cicd-pipeline-project.git
-    - `Unzip` the `code/zipped file`
-    - `Copy` and `Paste` everything `from the zipped file` into the `repository you cloned` in your local
-    - Open your `Terminal`
-        - Add the code to git, commit and push it to your upstream branch "main or master"
-        - Add the changes: `git add -A`
-        - Commit changes: `git commit -m "updated project POM and Jenkinsfile"`
-        - Push to GitHub: `git push`
-    - Confirm that the code is now available on GitHub
+    - Go to GitHub (github.com)
+    - Login to your GitHub Account
+    - Create a Repository called "Jenkins-CICD-Project"
+    - Clone the Repository in the "Repository" directory/folder in your local
+    - Download the code in in this repository "Main branch": https://github.com/awanmbandi/realworld-cicd-pipeline-project.git
+    - Unzip the code/zipped file
+    - Copy and Paste everything from the zipped file into the repository you cloned in your local
+    - Add the code to git, commit and push it to your upstream branch "main or master"
+    - Confirm that the code exist on GitHub
 
-2) Create An IAM Profile/Role For The Ansible Automation Engine (Dynamic Inventory)
-- Create an EC2 Service Role in IAM with AmazonEC2FullAccess Privilege 
-- Navigate to IAM
-![IAM!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/Screen%20Shot%202023-10-03%20at%206.20.44%20PM.png)
-    - Click on `Roles`
-    - Click on `Create Role`
-    - Select `Service Role`
-    - Use Case: Select `EC2`
-    - Click on `Next` 
-    - Attach Policy: `AmazonEC2FullAccess`
-    - Click `Next` 
-    - Role Name: `AWS-EC2FullAccess-Role`
-    - Click `Create`
-
-3) Jenkins/Maven/Ansible
-    - Create a Jenkins VM instance 
-    - Name: `Jenkins/Maven/Ansible`
-    - AMI: `Amazon Linux 2`
-    - Instance type: `t2.medium`
-    - Key pair: `Select` or `create a new keypair`
-    - Security Group (Edit/Open): `8080, 9100` and `22 to 0.0.0.0/0`
-    - IAM instance profile: Select `AWS-EC2FullAccess-Role`
+2) Jenkins/Maven/Ansible
+    - Create an Amazon Linux 2 VM instance 
+    - Name: Jenkins/Maven/Ansible
+    - Instance type: t2.medium
+    - Security Group (Edit/Open): 8080, 9100 and 22 to 0.0.0.0/0
+    - Key pair: Select or create a new keypair
     - User data (Copy the following user data): https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/maven-nexus-sonarqube-jenkins-install/jenkins-install.sh
     - Launch Instance
 
-4) SonarQube
-    - Create a SonarQube VM instance 
-    - Name: `SonarQube`
-    - AMI: `Ubuntu 20.04`
-    - Instance type: `t2.medium`
-    - Key pair: `Select a keypair`
-    - Security Group (Eit/Open): `9000, 9100` and `22 to 0.0.0.0/0`
+3) SonarQube
+    - Create an Create an Ubuntu 20.04 VM instance 
+    - Name: SonarQube
+    - Instance type: t2.medium
+    - Security Group (Eit/Open): 9000, 9100 and 22 to 0.0.0.0/0
+    - Key pair: Select or create a new keypair
     - User data (Copy the following user data): https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/maven-nexus-sonarqube-jenkins-install/sonarqube-install.sh
     - Launch Instance
 
-5) Nexus
-    - Create a Nexus VM instance 
-    - Name: `Nexus`
-    - AMI: `Amazon Linux 2`
-    - Instance type: `t2.medium`
-    - Key pair: `Select a keypair`
-    - Security Group (Eit/Open): `8081, 9100` and `22 to 0.0.0.0/0`
+4) Nexus
+    - Create an Amazon Linux 2 VM instance 
+    - Name: Nexus
+    - Instance type: t2.medium
+    - Security Group (Eit/Open): 8081, 9100 and 22 to 0.0.0.0/0
+    - Key pair: Select or create a new keypair
     - User data (Copy the following user data): https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/maven-nexus-sonarqube-jenkins-install/nexus-install.sh
     - Launch Instance
 
-6) EC2 (Dev Environment)
-    - Click on Launch instances
-    - Click `Add additional tags`
-      - Tag 1: Name: `Name`, Value: `Dev-Env`
-      - Tag 2: Name: `Environment`, Value: `dev`
-    - AMI: `Amazon Linux 2`
+5) EC2 (Dev/Stage/Prod)
+    - Create 3 Amazon Linux 2 VM instance
+    - Names: Dev-Env, Stage-Env and Prod-Env
     - Number: `3`
-    - Instance type: `t2.micro`
-    - Key pair: `Select a keypair`
-    - Security Group (Eit/Open): `8080, 9100, 9997` and `22 to 0.0.0.0/0`
+    - Instance type: t2.micro
+    - Security Group (Eit/Open): 8080, 9100, 9997 and 22 to 0.0.0.0/0
+    - Key pair: Select or create a new keypair
     - User data (Copy the following user data): https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/tomcat-splunk-installation/tomcat-ssh-configure.sh
     - Launch Instance
 
-7) EC2 (Stage Environment)
-    - Click on Launch instances
-    - Click `Add additional tags`
-      - Tag 1: Name: `Name`, Value: `Stage-Env`
-      - Tag 2: Name: `Environment`, Value: `stage`
-    - AMI: `Amazon Linux 2`
-    - Number: `3`
-    - Instance type: `t2.micro`
-    - Key pair: `Select a keypair`
-    - Security Group (Eit/Open): `8080, 9100, 9997` and `22 to 0.0.0.0/0`
-    - User data (Copy the following user data): https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/tomcat-splunk-installation/tomcat-ssh-configure.sh
+6) Prometheus
+    - Create an Ubuntu 20.04 VM instance 
+    - Name: Prometheus
+    - Instance type: t2.micro
+    - Security Group (Eit/Open): 9090 and 22 to 0.0.0.0/0
+    - Key pair: Select or create a new keypair
     - Launch Instance
 
-8) EC2 (Prod Environment)
-    - Click on Launch instances
-    - Click `Add additional tags`
-      - Tag 1: Name: `Name`, Value: `Prod-Env`
-      - Tag 2: Name: `Environment`, Value: `prod`
-    - AMI: `Amazon Linux 2`
-    - Number: `3`
-    - Instance type: `t2.micro`
-    - Key pair: `Select a keypair`
-    - Security Group (Eit/Open): `8080, 9100, 9997` and `22 to 0.0.0.0/0`
-    - User data (Copy the following user data): https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/tomcat-splunk-installation/tomcat-ssh-configure.sh
+7) Grafana
+    - Create an Ubuntu 20.04 VM instance
+    - Name: Grafana
+    - Instance type: t2.micro
+    - Security Group (Eit/Open): 3000 and 22 to 0.0.0.0/0
+    - Key pair: Select or create a new keypair
     - Launch Instance
 
-9) Prometheus
-    - Create a Prometheus VM instance 
-    - Name: `Prometheus`
-    - AMI: `Ubuntu 20.04`
-    - Instance type: `t2.micro`
-    - Key pair: `Select a keypair`
-    - Security Group (Eit/Open): `9090` and `22 to 0.0.0.0/0`
-    - IAM instance profile: Select `AWS-EC2FullAccess-Role`
+8) EC2 (Splunk)
+    - Create an Amazon Linux 2 VM instance
+    - Name: Splunk-Indexer
+    - Instance type: t2.large
+    - Security Group (Eit/Open): 22, 8000, 9997, 9100 to 0.0.0.0/0
+    - Key pair: Select or create a new keypair
     - Launch Instance
 
-10) Grafana
-    - Create a Grafana VM instance
-    - Name: `Grafana`
-    - AMI: `Ubuntu 20.04`
-    - Instance type: `t2.micro`
-    - Key pair: `Select a keypair`
-    - Security Group (Eit/Open): `3000` and `22 to 0.0.0.0/0`
-    - Launch Instance
+#### NOTE: Confirm and make sure you have a total of 8 VM instances
+![PipelineEnvSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-26%20at%202.51.21%20PM.png)
 
-11) EC2 (Splunk)
-    - Create a Splunk/Indexer VM instance
-    - Name: `Splunk-Indexer`
-    - AMI: `Amazon Linux 2`
-    - Instance type: `t2.large`
-    - Key pair: `Select a keypair`
-    - Security Group (Eit/Open): `22, 8000, 9997, 9100` to `0.0.0.0/0`
-    - Launch Instance
-
-#### NOTE: Confirm and make sure you have a total of 9 VM instances
-![PipelineEnvSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/Screenshot%202024-02-10%20at%202.17.03%E2%80%AFPM.png)
-
-12) Slack 
+9) Slack 
     - Go to the bellow Workspace and create a Private Slack Channel and name it "yourfirstname-jenkins-cicd-pipeline-alerts"
-    - Link: https://join.slack.com/t/jjtechtowerba-zuj7343/shared_invite/zt-24mgawshy-EhixQsRyVuCo8UD~AbhQYQ  
+    - Link: https://join.slack.com/t/realworldcicdproject/shared_invite/zt-1tryd7x1v-g8a~zEJBKKchVvvK87jkeQ  
       - You can either join through the browser or your local Slack App
-      - Create a `Private Channel` using the naming convention `YOUR_INITIAL-cicd-pipeline-alerts`
-        - **NOTE:** *`(The Channel Name Must Be Unique, meaning it must be available for use)`*
-      - Visibility: Select `Private`
-      - Click on the `Channel Drop Down` and select `Integrations` and Click on `Add an App`
-      - Search for `Jenkins` and Click on `View`
-      - Click on `Configuration/Install` and Click `Add to Slack` 
-      - On Post to Channel: Click the Drop Down and select your channel above `YOUR_INITIAL-cicd-pipeline-alerts`
+      - Create a `Private Channel` using the naming convention `cicd-pipeline-project-alerts`
+      - Click on the Drop down on the Channel and select Integrations and take `Add an App`
+      - Search for `Jenkins` and click on `View` -->> `Configuration/Install` -->> `Add to Slack` 
+      - On Post to Channel: Click the Drop Down and select your channel above `cicd-pipeline-project-alerts`
       - Click `Add Jenkins CI Integration`
-      - Scrol Down and Click `SAVE SETTINGS/CONFIGURATIONS`
+      - SAVE SETTINGS/CONFIGURATIONS
       - Leave this page open
       ![SlackConfig!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-26%20at%202.08.55%20PM.png)
     
     #### NOTE: Update Your Jenkins file with your Slack Channel Name
-    - Go back to your local, open your `Jenkins-Realworld-CICD-Project` repo/folder/directory on VSCODE
-    - Open your `Jenkinsfile`
-    - Update the slack channel name on line `"133"` (there about)
-    - Change the name from whatever that is there to your Slack Channel Name `YOUR_INITIAL-cicd-pipeline-alerts`
-        - Bring up your `Terminal` (Depending on your machine type) and run the following commands
-        - Add the changes to git: `git add -A`
-        - Commit the changes: `git commit -m "updated Jenkinsfile with slack channel name"`
-        - Push the changes to GitHub: `git push` 
-    - Confirm that the changes are available on GitHub
+    - Go back to your local, open your "Jenkins-CICD-Project" repo/folder/directory on VSCODE
+    - Open your "Jenkinsfile"
+    - Update the slack channel name on line "97" (there about)
+    - Change name from "cicd-project-alerts" (or whatever name thst's there) to yours
+    - Add the changes to git, commit and push to GitHub
+    - Confirm the changes are available on GitHub
+		- Save and Push to GitHub
 
 ## Configure All Systems
 ### Configure Promitheus
   - Login/SSH to your Prometheus Server
-  - Clone repository: `git clone https://github.com/awanmbandi/realworld-cicd-pipeline-project.git`
-  - Change directory: `cd realworld-cicd-pipeline-project`
-  - Swtitch branch: `git switch prometheus-and-grafana-install`
-  - Confirm Branch Switch: `git branch` and `ls -al`
-  - Install Prometheus: `bash install-prometheus.sh`
-  - Confirm the status shows *"Active (running)"*
+  - Clone the following repository: https://github.com/awanmbandi/realworld-cicd-pipeline-project.git
+  - Change directory to "realworld-cicd-pipeline-project"
+  - Swtitch to the "prometheus-and-grafana" git branch  
+  - Run: ./install-prometheus.sh
+  - Confirm the status shows "Active (running)"
   - Exit
 
 ### Configure Grafana
   - Login/SSH to your Grafana Server
-  - Clone repository: `git clone https://github.com/awanmbandi/realworld-cicd-pipeline-project.git`
-  - Change directory: `cd realworld-cicd-pipeline-project`
-  - Swtitch branch: `git switch prometheus-and-grafana-install`
-  - Confirm Branch Switch: `git branch` and `ls -al`
-  - Install Prometheus: `bash install-grafana.sh`
-  - Confirm the status shows *"Active (running)"*
+  - Clone the following repository: https://github.com/awanmbandi/realworld-cicd-pipeline-project.git
+  - Change directory to "realworld-cicd-pipeline-project"
+  - Swtitch to the "prometheus-and-grafana" git branch 
+  - Run: ls or ll  (to confirm you have the branch files)
+  - Run: ./install-grafana.sh
+  - Confirm the status shows "Active (running)"
   - Exit
 
 ### Configure The "Node Exporter" accross the "Dev", "Stage" and "Prod" instances including your "Pipeline Infra"
   - Login/SSH into the "Dev-Env", "Stage-Env" and "Prod-Env" VM instance
   - Perform the following operations on all of them
-  - Install git by running: `sudo yum install git -y `
-  - Clone repository: `git clone https://github.com/awanmbandi/realworld-cicd-pipeline-project.git`
-  - Change directory: `cd realworld-cicd-pipeline-project`
-  - Swtitch branch: `git switch prometheus-and-grafana-install`
-  - Confirm Branch Switch: `git branch` and `ls -al` *(to confirm you have the branch files)*
-  - Install The Node Exporter: `bash install-node-exporter.sh`
-  - Confirm the status shows *"Active (running)"*
+  - Install git by running: sudo yum install git -y 
+  - Clone the following repository: https://github.com/awanmbandi/realworld-cicd-pipeline-project.git
+  - Change directory to "realworld-cicd-pipeline-project"
+  - Swtitch to the "prometheus-and-grafana" git branch 
+  - Run: ls or ll  (to confirm you have the branch files)
+  - Run: ./install-node-exporter.sh
+  - Confirm the status shows "Active (running)"
   - Access the Node Exporters running on port "9100", open your browser and run the below
       - Dev-EnvPublicIPaddress:9100   (Confirm this page is accessible)
       - Stage-EnvPublicIPaddress:9100   (Confirm this page is accessible)
@@ -213,65 +152,66 @@
   - Exit
 
 ### Configure The "Node Exporter" on the "Jenkins-Maven-Ansible", "Nexus" and "SonarQube" instances 
-  - Login/SSH into the `"Jenkins-Maven-Ansible"`, `"Nexus"` and `"SonarQube"` VM instance
+  - Login/SSH into the "Jenkins-Maven-Ansible", "Nexus" and "SonarQube" VM instance
   - Perform the following operations on all of them
-  - Install git: 
-    - Jenkins/Maven/Ansible and Nexus VMs: `sudo yum install git -y`   
-    - SonarQube VM: `sudo apt install git -y`
-  - Clone repository: `git clone https://github.com/awanmbandi/realworld-cicd-pipeline-project.git`
-  - Change directory: `cd realworld-cicd-pipeline-project`
-  - Swtitch branch: `git switch prometheus-and-grafana-install`
-  - Confirm Branch Switch: `git branch` and `ls -al` *(to confirm you have the branch files)*
-  - Install The Node Exporter: `bash install-node-exporter.sh`
-  - Confirm the status shows *"Active (running)"*
-  - Access the Node Exporters running on port `"9100"`, open your browser and run the below
+  - Install git by running: sudo yum install git -y    (The SonarQube server already has git)
+  - Clone the following repository: https://github.com/awanmbandi/realworld-cicd-pipeline-project.git
+  - Change directory to "realworld-cicd-pipeline-project"
+  - Swtitch to the "prometheus-and-grafana" git branch 
+  - Run: ls or ll  (to confirm you have the branch files including "install-node-exporter.sh")
+  - Run: ./install-node-exporter.sh
+  - Make sure the status shows "Active (running)"
+  - Access the Node Exporters running on port "9100", open your browser and run the below
       - Jenkins-Maven-AnsiblePublicIPaddress:9100   (Confirm the pages are accessible)
       - NexusPublicIPaddress:9100   
       - SonarQubePublicIPaddress:9100   
   - Exit
   ![NodeExporter!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-26%20at%202.00.23%20PM.png)
 
-### Confirm That The Prometheus Service Disconvery Config Works As Expected
-  - Open a TAB on your choice `Browser`
-  - Copy the Prometheus `PublicIP Address` and paste on the `browser/tab` with port `9090` e.g `"PrometheusPublicIPAddres:9090"`
-      - Once you get to the Prometheus Dashboard Click on `"Status"` and Click on `"Targets"`
-  - Confirm that Prometheus is able to reach everyone of your `Nodes`, do this by confirming the Status `"UP" (green)`
-  ![ConfigurePrometheus!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/Screenshot%202024-02-10%20at%204.44.02%E2%80%AFPM.png)
+### Update the Prometheus config file and include all the IP Addresses of the Pipeline Instances that are 
+  running the Node Exporter API. That'll include ("Dev", "Stage", "Prod", "Jenkins-Maven-Ansible", "Nexus" and "SonarQube")
+  - SSH into the Prometheus instance either using your GitBash (Windows) or Terminal (macOS) or browser
+  - Run the command: sudo vi /etc/prometheus/prometheus.yml
+      - Navigate to "- targets: ['localhost:9090']" and add the "IPAddress:9100" for all the above Pipeline instances. Ecample "- targets: ['localhost:9090', 'DevIPAddress:9100', 'StageIPAddress:9100', 'ProdIPAddress:9100', 'Jenkins-Maven-AnsibleIPAddress:9100'] ETC..."
+      - Save the Config File and Quit
+  - Open a TAB on your choice browser
+  - Copy the Prometheus PublicIP Addres and paste on the browser/tab with port 9100 e.g "PrometheusPublicIPAddres:9100"
+      - Once you get to the Prometheus Dashboard Click on "Status" and Click on "Targets"
+  - Confirm that Prometheus is able to reach everyone of your Nodes, do this by confirming the Status "UP" (green)
+  - Done
+  ![ConfigurePrometheus!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/prometheus-targets.png)
 
 ### Open a New Tab on your browser for Grafana also if you've not done so already. 
-  - Copy your `Grafana Instance Public IP` and put on the browser with port `3000` e.g `"GrafanaInstancePublic:3000"`
+  - Copy your Grafana Instance Public IP and put on the browser with port 3000 e.g "GrafanaPublic:3000"
   - Once the UI Opens pass the following username and password
-      - Username: `admin`
-      - Password: `admin`
-      - Click on `Log In`
-      - New Username: `admin`
-      - New Password: `admin`
-      - Click on `Submit`
-  ![ConfigureGrafana!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/sagdsgfsa.png)
+      - Username: admin
+      - Password: admin
+      - New Username: admin
+      - New Password: admin
+      - Save and Continue
+  ![ConfigureGrafana!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/raspberry-grafana-login-window-e1560717895280.png)
   - Once you get into Grafana, follow the below steps to Import a Dashboard into Grafana to visualize your Infrastructure/App Metrics
-      - Click on `Configuration/Settings` on your left
-      - Click on `Data Sources`
-      - Click on `Add Data Source`
-      - Select `Prometheus`
-      - Underneath `HTTP URL`: `http://PrometheusPublicOrPrivateIPaddress:9090`
-      - Click on `SAVE and TEST`
-  - Download the Prometheus `Node Exporter Full` Grafana Dashboard JSON
-    - Click on this link to Download the JSON: https://grafana.com/api/dashboards/1860/revisions/25/download
-    - **NOTE:** *(Confirm that the Dashboard JSON was downloaded successfully)*
-
-  - Navigate to `"Create"` on your left (the `+` sign)
-      - Click on `Import`
-      - Click on `Upload JSON file` and Select the `Dashboard JASON` file you just downloaded
-  ![GrafanaMetrics!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/fwefwrfwrsgvsd.png)
-      - Scrol down to `"Prometheus"` and select the `"Prometheus Data Source"` you defined ealier which is `Prometheus`
-      - CLICK on `"Import"`
+      - Click on "Configuration/Settings" on your left
+      - Click on "Data Sources"
+      - Click on "Add Data Source"
+      - Select Prometheus
+      - Underneath HTTP URL: http://PrometheusPublicOrPrivateIPaddress:9090
+      - Click on "SAVE and TEST"
+  - Navigate to "Create" on your left (the `+` sign)
+      - Click on "Import"
+      - Copy the following link: https://grafana.com/grafana/dashboards/1860
+      - Paste the above link where you have "Import Via Grafana.com"
+      - Click on Load (The one right beside the link you just pasted)
+      - Scrol down to "Prometheus" and select the "Data Source" you defined ealier which is "Prometheus"
+      - CLICK on "Import"
   - Refresh your Grafana Dashbaord 
       - Click on the "Drop Down" for "Host" and select any of the "Instances(IP)"
   ![GrafanaMetrics!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/1_KimwgjULRZzONpjGFH1sTA%20(1).png)
 
-### Setup Splunk Server/Indexer and Configure Forwarders
-#### A) SSH into your `Splunk Server` including `Dev`, `Stage` and `Prod` Instances
-- **NOTE:** Run The Following Commands On The `Splunk Server/Indexer Only`
+### Setup Splunk Server and Configure Forwarders
+#### A) SSH into your `Splunk Server` including `Dev`, `Stage` and `Prod` Instances to Configure Splunk
+- **NOTE:** Execute and Perform all operations across all your `Dev, Stage and Prod` Environments
+- **NOTE:** Run all commands and queries across all your VMs (Dev, Stage and Prod)
     - Download the Splunk RPM installer package for Linux
     - Link: 
     ```bash
@@ -287,7 +227,7 @@
     cd /opt/splunk/bin
     ./splunk start --accept-license --answer-yes
     ```
-- Enter `adminadmin` as the ``username`` and as the ``password``, remember this because you will need this to log into Splunk on the Browser
+- Enter administrator ``username`` and ``password``, remember this because you will need this to log into the application
 - NOTE: The Password must be up to `8` characters. You can assign `adminadmin`
     ![SplunkSetup1!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-28%20at%2010.48.24%20AM%20copy.png)
 
@@ -306,12 +246,10 @@
     ![SplunkSetup3!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-29%20at%2010.34.45%20PM.png)
 
     - **NOTE:** If You Do Not Complete This Part Your Splunk Configuration Won't Work
-- **IMPORTANT:** Navigate Back to your `Terminal` where you're `Configuring the Indexer`
-- **Restart Splunk** (For those changes to be captured): RUN the command `./splunk restart`
-![SplunkSetup4!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/Screen%20Shot%202023-07-02%20at%209.50.16%20PM.png)
-- Refresh The Splunk Tab at http://Splunk-Server-IP:8000 and *`log back into splunk`*
-- After `Logging In Back` into Splunk, Confirm that your Stat's Showing Green as shown in the screenshot below
-![SplunkSetup4!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/fwefwrfwrsgvsdsd.png) 
+    - **IMPORTANT:** Navigate Back to your `Terminal` where you're `Configuring the Indexer`
+        - **Restart Splunk** (For those changes to be captured):  `./splunk restart`
+        ![SplunkSetup4!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/Screen%20Shot%202023-07-02%20at%209.50.16%20PM.png)
+    - Refresh The Splunk Tab at http://Splunk-Server-IP:8000 and log back into splunk
 
 #### Step 2: Install The Splunk Forwarder only on the `Dev, Stage and Prod` Servers
 - **NOTE:** Execute every command mentioned bellow across all application servers in all the enviroments
@@ -328,8 +266,8 @@ ls -al
 sudo yum install ./splunkforwarder-9.1.1-64e843ea36b1.x86_64.rpm -y
 ```
 
-- Change to the `splunkforwarder bin` directory and start the forwarder
-- NOTE: `The Password` must be at least `8` characters long.
+- Change to the splunkforwarder bin directory and start the forwarder
+- NOTE: The Password must be at least `8` characters long.
 - Set the port for the forwarder to ``9997``, this is to keep splunk server from conflicting with the splunk forwarder
 ```bash
 sudo bash
@@ -352,7 +290,7 @@ cd /opt/splunkforwarder/bin
 ./splunk add monitor /var/log/tomcat/
 ```
 
-### 2. Navigate Back to Your `Splunk Indexer/Server` 
+2. Navigate Back to Your `Splunk Indexer/Server` 
 - Set the port for the Splunk Indexer or Server to listen on 9997 and restart
 ```bash
 cd /opt/splunk/bin
@@ -379,20 +317,19 @@ cd /opt/splunk/bin
         - Run: `sudo cat /var/lib/jenkins/secrets/initialAdminPassword`
         - Copy the password and login to Jenkins
     ![JenkinsSetup1!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/jenkins-signup.png) 
-    - Plugins: Choose `Install Suggested Plugings` 
+    - Plugins: Choose Install Suggested Plugings 
     - Provide 
-        - Username: **`admin`**
-        - Password: **`admin`**
-        - `Name` and `Email` can also be admin. You can use `admin` all, as its a poc.
-    - Click `Continue`
-    - Click on `Start using Jenkins`
+        - Username: **admin**
+        - Password: **admin**
+        - Name and Email can also be admin. You can use `admin` all, as its a poc.
+    - Continue and Start using Jenkins
     ![JenkinsSetup2!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%208.49.43%20AM.png) 
 
 2)  #### Plugin installations:
-    - Click on `Manage Jenkins`
-    - Click on `Plugins`
-    - Click `Available`
-    - Search and Install the following Plugings `"Install Without Restart"`
+    - Click on "Manage Jenkins"
+    - Click on "Plugin Manager"
+    - Click "Available"
+    - Search and Install the following Plugings "Install Without Restart"
         - **SonarQube Scanner**
         - **Maven Integration**
         - **Pipeline Maven Integration**
@@ -400,108 +337,70 @@ cd /opt/splunk/bin
         - **Slack Notification**
         - **Nexus Artifact Uploader**
         - **Build Timestamp (Needed for Artifact versioning)**
-    - Click on `Install`
-    - Once all plugins are installed
-    - Select/Check the Box **Restart Jenkins when installation is complete and no jobs are running**
+    - Once all plugins are installed, select **Restart Jenkins when installation is complete and no jobs are running**
     ![PluginInstallation!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%2010.07.32%20PM.png)
-    - Refresh your Browser and Log back into Jenkins
-    - Once you log back into Jenkins
 
 3)  #### Global tools configuration:
     - Click on Manage Jenkins -->> Global Tool Configuration
-    ![JDKSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/sdsdsdsdsd.png)
+    ![JDKSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%208.59.50%20AM.png)
 
-    - **JDK** 
-        - Click on `Add JDK` -->> Make sure **Install automatically** is enabled 
+        **JDK** -->> Add JDK -->> Make sure **Install automatically** is enabled -->> 
         
         **Note:** By default the **Install Oracle Java SE Development Kit from the website** make sure to close that option by clicking on the image as shown below.
 
-        ![JDKSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/dsdsdsdsdsd.png)
+        ![JDKSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%208.59.50%20AM.png)
 
-        * Click on `Add installer`
-        * Select `Extract *.zip/*.tar.gz` 
-        * Name: **`localJdk`**
+        * Click on Add installer
+        * Select Extract *.zip/*.tar.gz -->> Fill the below values
+        * Name: **localJdk**
         * Download URL for binary archive: **https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz**
-        * Subdirectory of extracted archive: **`jdk-11.0.1`**
-    - **Git** 
-      - Click on `Add Git` 
-      - Enable `Install automatically`(Optional)
+        * Subdirectory of extracted archive: **jdk-11.0.1**
+    - **Git** -->> Add Git -->> Install automatically(Optional)
       ![GitSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%209.36.23%20AM.png)
     
-    - **SonarQube Scanner** 
-      - Click on `Add SonarQube Scanner` 
-      - Enable: `Install automatically` (Optional)
+    - **SonarQube Scanner** -->> Add SonarQube Scanner -->> Install automatically(Optional)
       ![SonarQubeScanner!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%209.35.20%20AM.png)
 
-    - **Maven** 
-      - Click on `Add Maven` 
-      - Enable **`Install automatically`** is enabled 
-      * Name: **`localMaven`**
-      * Version: Keep the default version as it is to latest
-    - Click on `SAVE`
+    - **Maven** -->> Add Maven -->> Make sure **Install automatically** is enabled -->> Install from Apache -->> Fill the below values
+      * Name: **localMaven**
+      * Version: Keep the default version as it is 
+    - Click on SAVE
     ![MavenSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%209.44.14%20AM.png)
     
 4)  #### Credentials setup(SonarQube, Nexus, Ansible and Slack):
-    - Click on `Manage Jenkins` 
-      - Click on `Credentials` 
-      - Click on `Global` (unrestricted)
-      - Click on `Add Credentials`
+    - Click on Manage Jenkins -->> Manage Credentials -->> Global credentials (unrestricted) -->> Add Credentials
       1)  ##### SonarQube secret token (SonarQube-Token)
           - ###### Generating SonarQube secret token:
-              - Login to your SonarQube Application (http://SonarServer-Sublic-IP:9000)
-                - Default username: **`admin`** 
-                - Default password: **`admin`**
-              - Click on `Projects`
-              - Click on `Create New Project`
-                - Project key: `JavaWebApp-Project`
-                - Display name: `JavaWebApp-Project`
-              - Click on `Set Up`
-              - Generate a Tokens: Provide Name ``JavaWebApp-SonarQube-Token``
-              - Click on `Generate`
-              - Click on `Continue`
-              - Run analysis on your project: Select `Java`
-              - Build technology: Select `Maven`
-              - COPY the `TOKEN`
-          - ###### Store SonarQube Secret Token in Jenkins:
-              - Navigate back to Jenkins
+              - Login to your SonarQube server (http://SonarServer-Sublic-IP:9000, with the credentials username: **admin** & password: **admin**)
+              - Click on profile -->> My Account -->> Security -->> Tokens
+              - Generate Tokens: Fill ``SonarQube-Token``
+              - Click on **Generate**
+              - Copy the token 
+          - ###### Store SonarQube Secret token in Jenkins:
               - Click on ``Add Credentials``
               - Kind: Secret text!! 
-              - Secret: `Paste the SonarQube token` value that we have created on the SonarQube server
+              - Secret: Fill the SonarQube token value that we have created on the SonarQube server
               - ID: ``SonarQube-Token``
-              - Description: `SonarQube-Token`
+              - Description: SonarQube-Token
               - Click on Create
 
       2)  ##### Slack secret token (slack-token)
-          - ###### Get The Slack Token: 
-              - Slack: https://join.slack.com/t/jjtechtowerba-zuj7343/shared_invite/zt-24mgawshy-EhixQsRyVuCo8UD~AbhQYQ
-              - Navigate to the Slack "Channel you created": `YOUR_INITIAL-cicd-pipeline-alerts`
-              - Click on your `Channel Drop Down`
-              - Click on `Integrations` and Click on `Add an App`
-              - Click on `Jenkins CI VIEW` and Click on `Configuration`
-              - Click on `Add to Slack`, Click on the Drop Down and `Select your Channel`
-              - Click on `Add Jenkins CI Integration`
-              - **`NOTE:`** *The TOKEN is on Step 3*
-
-          - ###### Create The Slack Credential For Jenkins:
-              - Click on ``Add Credentials``
-              - Kind: Secret text            
-              - Secret: Place the Integration Token Credential ID (Note: Generate for slack setup)
-              - ID: ``Slack-Token``
-              - Description: `slack-token`
-              - Click on `Create`  
+          - Click on ``Add Credentials``
+          - Kind: Secret text            
+          - Secret: Place the Integration Token Credential ID (Note: Generate for slack setup)
+          - ID: ``Slack-Token``
+          - Description: slack-token
+          - Click on Create  
 
       3)  ##### Nexus Credentials (Username and Password)
           - ###### Login to Nexus and Set Password
               - Access Nexus: http://Nexus-Pub-IP:8081/
-	          - Default Username: `admin`
+	          - Default Username: admin
 	          - NOTE: Login into your "Nexus" VM and "cat" the following file to get the password.
 	          - Command: ``sudo cat /opt/nexus/sonatype-work/nexus3/admin.password``
 	          - Password: `Fill In The Password and Click Sign In`
-	          - Click `Next` 
-              - Provide New Password: `admin`
-	          - Configure Anonymous Access: `Disable anonymous access`
-              - Click on `Finish`
-
+	          - Click Next -->> Provide New Password: "admin" 
+	          - Configure Anonymous Access: "Enable anonymous access" -->> Finish
           - ###### Nexus credentials (username & password)
 	          - Click on ``Add Credentials``
 	          - Kind: Username with password                  
@@ -509,8 +408,8 @@ cd /opt/splunk/bin
 	          - Enable Treat username as secret
 	          - Password: ``admin``
 	          - ID: ``Nexus-Credential``
-	          - Description: `nexus-credential`
-	          - Click on `Create`   
+	          - Description: nexus-credential
+	          - Click on Create   
 
       4)  ##### Ansible deployment server credential (username & password)
           - Click on ``Add Credentials``
@@ -519,52 +418,42 @@ cd /opt/splunk/bin
           - Enable Treat username as secret
           - Password: ``ansibleadmin``
           - ID: ``Ansible-Credential``
-          - Description: `Ansible-Credential`
-          - Click on `Create`   
+          - Description: Ansible-Credential
+          - Click on Create   
       ![SonarQubeServerSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-27%20at%202.10.40%20PM.png)
 
 5)  #### Configure system:    
-    1)  - Click on ``Manage Jenkins`` 
-        - Click on ``Configure System`` and navigate to the `SonarQube Servers` section
-        - Click on Add `SonarQube`
-        - Server URL: http://YOUR_SONARQUBE_PRIVATE_IP:9000
-        - Server authentication token: Select `SonarQube-Token`
+    1)  - Click on ``Manage Jenkins`` -->> ``Configure System`` 
+        - `SonarQube Servers`
         ![SonarQubeServerSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%2010.13.39%20AM.png)
 
-    2)  - Still on `Manage Jenkins` and `Configure System`
-        - Scroll down to the `Slack` Section (at the very bottom)
-        - Go to section `Slack`
-            - `NOTE:` *Make sure you still have the Slack Page that has the `team subdomain` & `integration token` open*
-            - Workspace: **Replace with `Team Subdomain` value** (created above)
-            - Credentials: select the `Slack-Token` credentials (created above) 
-            - Default channel / member id: `#PROVIDE_YOUR_CHANNEL_NAME_HERE`
-            - Click on `Test Connection`
-            - Click on `Save`
+    2)  - Click on Manage Jenkins -->> Configure System
+        - Go to section Slack
+            - Use new team subdomain & integration token credentials created in the above slack joining step
+            - Workspace: **Replace with Team Subdomain value** (created above)
+            - Credentials: select the slack-token credentials (created above) 
+            - Default channel / member id: #PROVIDE_YOUR_CHANNEL_NAME_HERE
+            - Test Connection
+            - Click on Save
         ![SlackSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%2010.31.12%20AM.png)
 
 ### SonarQube Configuration
 2)  ### Setup SonarQube GateKeeper
-    - Click on `Quality Gate` 
-    - Click on `Create`
-    - Name: `JavaWebApp-QualityGate`
-    ![SonarQubeSetup2!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/dsdsdsdsdsdsds.png)
-    - Click on `Save` to Create
+    - Click on -->> Quality Gate 
+    ![SonarQubeSetup2!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-27%20at%202.17.50%20PM.png)
+    - Click on -->> Create
     ![SonarQubeSetup2!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%2011.00.25%20AM.png)
     - Add a Quality Gate Condition to Validate the Code Against (Code Smells or Bugs)
     ![SonarQubeSetup3!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%2011.02.36%20AM.png)
     
     - Add Quality to SonarQube Project
     -  ``NOTE:`` Make sure to update the `SonarQube` stage in your `Jenkinsfile` and Test the Pipeline so your project will be visible on the SonarQube Project Dashboard.
-    - Click on `Projects` 
-    - Click on your project name `JavaWebApp-Project` 
-      - Click on `Project Settings`
-      - Click on `Quality Gate`
-      - Select your QG `JavaWebApp-QualityGate`
-
-    ![SonarQubeSetup3!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/SDFVDSFVDFV.png)
+    - Click on Projects -->> Administration -->> Select `Quality Gate`
+    ![SonarQubeSetup3!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-24%20at%2011.05.47%20AM.png)
 
 3)  ### Setup SonarQube Webhook to Integrate Jenkins (To pass the results to Jenkins)
-    - Click on `Administration` and Select `Webhook`
+    - Still on `Administration`
+    - Select `Webhook`
     - Click on `Create Webhook` 
       - Name: `jenkinswebhook`
       - URL: `http://Jenkins-Server-Private-IP:8080/sonarqube-webhook`
@@ -587,29 +476,25 @@ cd /opt/splunk/bin
 
 ### Pipeline creation
 - Update The ``Jenkinsfile`` If Neccessary
-- Update `SonarQube IP address` in your `Jenkinsfile` On `Line 61`
-- Update the `SonarQube projectKey or name` in your `Jenkinsfile` On `Line 60`
-- Update your `Slack Channel Name` in the `Jenkinsfile` on `Line 133`
-- Update Your `Nexus IP` in the `Jenkinsfile` on `Line 80`
+- Update `SonarQube IP address` in your `Jenkinsfile`
+- Update the `SonarQube projectKey or name` in your `Jenkinsfile`
+- Update your `Slack Channel Name` in the `Jenkinsfile` 
     
     - Log into Jenkins: http://Jenkins-Public-IP:8080/
-    - Click on `New Item`
-    - Enter an item name: `Jenkins-Complete-CICD-Pipeline` 
-    - Select the category as **`Pipeline`**
-    - Click `OK`
-    - Select GitHub project: Project url `Provide Your Project Repo Git URL`
+    - Click on **New Item**
+    - Enter an item name: **Jenkins-Complete-CICD-Pipeline** & select the category as **Pipeline**
+    - Now scroll-down and in the Pipeline section -->> Definition -->> Select Pipeline script from SCM
+    - GitHub project: `Provide Your Project Repo Git URL`
     - GitHub hook trigger for GITScm polling: `Check the box` 
       - NOTE: Make sure to also configure it on GitHub's side
-    - Pipeline Definition: Select `Pipeline script from SCM`
-      - SCM: `Git`
-      - Repositories
-        - Repository URL: `Provide Your Project Repo Git URL` (the one you created in the initial phase)
-        - Credentials: `none` *since the repository is public*
+    - SCM: **Git**
+    - Repositories
+        - Repository URL: FILL YOUR OWN REPO URL (that we created by importing in the first step)
         - Branch Specifier (blank for 'any'): ``*/main``
         - Script Path: ``Jenkinsfile``
-    - Click on `SAVE`
+    - Save
     - NOTE: Make Sure Your Pipeline Succeeds Until ``SonarQube GateKeeper``. Upload to Artifactory would fail.
-    - Click on `Build Now` to TEST Pipeline 
+    - TEST Pipeline 
 
     ### A. Pipeline Test Results 
     - Jenkins Pipeline Job
@@ -635,44 +520,21 @@ cd /opt/splunk/bin
     ```
 
 ### Nexus Configuration
-1)  ### Navigate to Accessing Nexus: 
-    The nexus service on port `8081`. To access the nexus dashboard, visit http://Nexus-Pub-IP:8081. 
-    - Username: ``admin``
-    - Password: `admin`
+1)  ### Accessing Nexus: 
+    The nexus service on port 8081. To access the nexus dashboard, visit http://Nexus-Pub-IP:8081. You will be able to see the nexus homepage as shown below.
+    - Default username: ``admin``
+    - Default Password: ```sudo cat /app/sonatype-work/nexus3/admin.password```
+    - NOTE: Once you login, you will be prompted to reset the password
 
-    ### Go ahead and Create your Nexus Project Repositories
-    - CREATE 1st REPO (Release Repo): 
-        - Click on the Gear Icon 
-        - Click on `Repository` 
-        - Click `Create Repository` 
-        - Select Recipe: `maven2(hosted)` 
-        - Name: `maven-project-releases` 
-        - Version Policy: Select `Release`
-        - Click `Create Repository`
+    ### Go ahead and create your Nexus Project Repositories
+    - CREATE 1st REPO: Click on the Gear Icon -->> Repository -->> Create Repository -->> Select `maven2(hosted)` -->> Name: `maven-project-releases` -->> Create Repository
 
-    - CREATE 2nd REPO (Snapshot Repo): 
-        - Click on `Create Repository` 
-        - Select Recipe: `maven2(hosted)` 
-        - Name: `maven-project-snapshots` 
-        - Version Policy: Select `Snapshot` 
-        - Click `Create Repository`
+    - CREATE 2nd REPO: Click Create Repository -->> Select `maven2(hosted)` -->> Name: `maven-project-snapshots` -->> Version Policy: Select `Snapshot` -->> Create Repository
 
-    - CREATE 3rd REPO (Proxy/Remote Repo): 
-        - Click on `Create Repository` 
-        - Select Recipe: `maven2(proxy)` 
-        - Name: `maven-project-central` 
-        - Version Policy: Select `Release`
-        - Remote Storage: https://repo.maven.apache.org/maven2 
-        - Click `Create Repository`
+    - CREATE 3rd REPO: Click Create Repository -->> Select `maven2(proxy)` -->> Name: `maven-project-central` -->> Remote Storage: provide this link https://repo.maven.apache.org/maven2 -->> Create Repository
 
-    - CREATE 4th REPO (Group Repo): 
-        - Click on `Create Repository` 
-        - Select Recipe: `maven2(group)` 
-        - Name: `maven-project-group` 
-        - Version Policy: Select `Mixed` 
-        - Member Repositories: Assign All The Repos You Created to The Group 
-          - **MEANING:** *Move all 4 repositories to the Box on your Right*
-        - Click `Create Repository`
+    - CREATE 4th REPO: Click Create Repository -->> Select `maven2(group)` -->> Name: `maven-project-group` -->> Version Policy: Select `Mixed` -->> Assign All The Repos You Created to The Group -->> Create Repository
+    - Once you select create repository and select maven2(group)
 
     ![NexusSetup!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-27%20at%203.42.03%20PM.png) 
 
@@ -685,8 +547,8 @@ A) Update Maven `POM.xml` file
 <url>http://Nexus-Server-Private-IP:8081/repository/maven-project-releases/</url>
 ```
 
--  **`NOTE:`** Confirm that you have the following Stage in your Jenkins pipeline config. Once you Confirm, Go ahead and Update the following Values (`nexusUrl`(Your Nexus IP), `repository`, `credentialsId` (Variable)). If necessary 
-- **`NOTE:`** The following `environment` config represents the NEXUS CREDENTIAL stored in jenkins. we're pulling the credential with the use of the predefine ``NEXUS_CREDENTIAL_ID`` environment variable key. Which jenkins already understands. 
+-  Add the following Stage in your Jenkins pipeline config and Update the following Values (nexusUrl, repository, credentialsId, artifactId, file etc.). If necessary 
+- The following `environment` config represents the NEXUS CREDENTIAL stored in jenkins. we're pulling the credential with the use of the predefine ``NEXUS_CREDENTIAL_ID`` environment variable key. Which jenkins already understands. 
   ```bash
   environment {
     WORKSPACE = "${env.WORKSPACE}"
@@ -717,13 +579,8 @@ A) Update Maven `POM.xml` file
   }
   ```
 - After confirming all changes, go ahead and save, then push to GitHub.
-    - Add the changes: `git add -A`
-    - Commit changes: `git commit -m "updated project POM and Jenkinsfile"`
-    - Push to GitHub: `git push`
-
 - Test your Pipeline to ``Make Sure That The Artifacts Upload Stage Succeeds``.
-    - Navigate to Jenkins Dashboard (Run/Test The Job) 
-    - Click on `Build Now`
+- Navigate to Jenkins Dashboard (Run/Test The Job) 
 ![PipelineStagesArtifactSuccess!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/second-pipeline-run.png)
 
 - Navigate to `Nexus` as well to confirm that the artifact was `Stored` in the `maven-project-releases` repository
@@ -767,17 +624,6 @@ echo "ansibleadmin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
         - Navigate to `Build Triggers`
             - Enable/Check the box `GitHub hook trigger for GITScm polling`
         - Click on `Apply and Save`
-### TROUBLESHOOT
-#### A) Ansible Automation
-- **`NOTE:`** You pipeline can actually Run to the end and you get a Success. But you might not have access to the Application. Could be due the fact that you're using a different `Region` as compared to what's stated in the `ansible-config/aws_ec2.yaml` config file. 
-    - To Reolve this, Navigate to this file 
-    - Change the `Region` to `Your Region`
-    - Commit the Changes and Push to GitHub
-    - Then `Re-Run The Pipeline`
-    - Finally `Try Accessing The Application` Now
-
-- Verify that the `Jenkins/Maven/Ansible` instance has an `IAM Profile with EC2 Access`
-- Also Confirm that the `Dev, Stage` and `Prod` Environments have their assigned Environment tags
 
 ### TEST PIPELINE DEPLOYMENT
 - Confirm/Confirm that your deployments where all successful accross all Environments
@@ -787,14 +633,14 @@ echo "ansibleadmin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ![SlackSuccessAllStages!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-27%20at%205.06.44%20PM.png)
 
 - Confirm Access to your application: http://Dev-or-Stage-or-Prod-PubIP:8080/webapp/
-![FinalProductDisplay!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/blob/zdocs/images/SDFVDSFVDFVsdsd.png)
+![FinalProductDisplay!](https://github.com/awanmbandi/realworld-cicd-pipeline-project/raw/zdocs/images/Screen%20Shot%202023-04-27%20at%204.50.42%20PM.png)
 
 ### NOTE: That By completing this project, you are now considered a Professional DevOps Engineer.  
 You've been able to accomplish something very unique and special which most people only dream of in their IT journey. Remmber that during an interview, you may be asked some challenging questions or be faced with a trial assignment that require you to both utilize your existing skillsets and think out of the box. During this time you must be very confident and determined in your pursuit. 
 
 Never forget that you have what it takes to add more than enough VALUE to any organization out there in the industry and to STAND OUT in any interview setting no matter who is sitted on the interview seat.
 
-## Congratulations Team!!!👨🏼‍💻 Congratulations!!!👨🏼‍💻
+### Congratulations Team!!!👨🏼‍💻 Congratulations!!!👨🏼‍💻
 
 
 
